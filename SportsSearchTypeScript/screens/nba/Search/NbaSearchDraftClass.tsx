@@ -18,7 +18,6 @@ function NbaSearchDraftClass() {
     const [submitted, setSubmitted] = useState(false)
 
     function getDraftClass() {
-        console.log('fired', year, playerData)
         const currentYear = new Date().getFullYear() 
         if (year.length != 4) {
             Alert.alert('Invald Input', 'Year must be 4 digits')
@@ -38,7 +37,7 @@ function NbaSearchDraftClass() {
     }
 
     useEffect(() => {
-        setPlayerData(data.playerSearch)
+        setPlayerData(data.draftClass)
     }, [loading])
 
     function renderItem(item:NbaDraftClassType) {

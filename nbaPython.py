@@ -197,9 +197,11 @@ def getBoxScoresHandler(date:str, team1:str, team2:str, period:str, statType:str
     # stat_type - Period for which to acquire stats. One of 'BASIC'|'ADVANCED'. Default value is 'BASIC'. Note that advanced stats are only available for period='GAME'.
 
     res = get_box_scores(date, team1, team2, period, statType)
+    # res = get_box_scores('2022-04-02', 'ATL', 'BRK', 'GAME', 'BASIC')
     team1Data = formatDataframe(res[team1])
     team2Data = formatDataframe(res[team2])
     returnList = [team1Data, team2Data]
+    print('\n\n\n', returnList)
     # print(res[team1], res[team2])
     # print(team1Data, '\n', team2Data)
     return simplejson.dumps(returnList)
@@ -273,7 +275,9 @@ def getBoxScoresHandlerServer():
     team1 = data['team1']
     team2 = data['team2']
     period = data['period']
-    statType = data['stateType']
+    statType = data['statType']
+
+    print('\n\n\n\n\n\n\n',date, team1, team2, period, statType)
 
     return getBoxScoresHandler(date, team1, team2, period, statType)
 
