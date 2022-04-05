@@ -1,0 +1,23 @@
+export interface NbaDraftClassType {
+    PICK: string | undefined,
+    TEAM: string | undefined,
+    PLAYER: string | undefined,
+    COLLEGE: string | undefined,
+    YEARS: string | undefined,
+    TOTALS_G: string | undefined,
+    TOTALS_MP: string | undefined,
+    TOTALS_PTS: string | undefined,
+    TOTALS_TRB: string | undefined,
+    TOTALS_AST: string | undefined,
+    'SHOOTING_FG%': string | undefined,
+    'SHOOTING_3P%': string | undefined,
+    'SHOOTING_FT%': string | undefined,
+    PER_GAME_MP: string | undefined,
+    PER_GAME_PTS: string | undefined,
+    PER_GAME_TRB: string | undefined,
+    PER_GAME_AST: string | undefined,
+    ADVANCED_WS: string | undefined,
+    'ADVANCED_WS/48': string | undefined,
+    ADVANCED_BPM: string | undefined,
+    ADVANCED_VORP: string | undefined
+}

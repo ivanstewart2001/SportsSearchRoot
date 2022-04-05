@@ -1,0 +1,16 @@
+node_modules/
+SportsSearchTypeScript/node_modules/
+bin/
+SportsSearchTypeScript/.expo/
+dist/
+SportsSearchTypeScript/npm-debug.*
+SportsSearchTypeScript/*.jks
+SportsSearchTypeScript/*.p8
+SportsSearchTypeScript/*.p12
+SportsSearchTypeScript/*.key
+SportsSearchTypeScript/*.mobileprovision
+SportsSearchTypeScript/*.orig.*
+SportsSearchTypeScript/web-build/
+
+# macOS
+SportsSearchTypeScript/.DS_Store
