@@ -1,12 +1,13 @@
-import { NbaPlayerStatsParams, NbaPlayerHeadshotParams, NbaBoxScoreParams } from './../types/redux/nba';
+import { NbaPlayerStatsParams, NbaPlayerHeadshotParams, NbaBoxScoreParams, NbaScheduleParams, NBAScheduleForCurrentWeekResponse } from './../types/redux/nba';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from "axios"
 import { NbaDraftParams } from '../types/redux/nba'
 import { NbaDraftClassType } from '../types/nba/draftClass'
 
 const PORT = '3001'
 const IP_ADDRESS = '172.17.13.218'
 const START_URL = `http://${IP_ADDRESS}:${PORT}`
+const API_KEY:Readonly<string> = '201771a6cemshea6057f5378b9d3p1abed7jsn896b7d0a937d'
 
 const initialState = {
     loading: false,
@@ -18,6 +19,7 @@ const initialState = {
             team1: [],
             team2: []
         },
+        schedule: [],
         error: ''
     }
 }
@@ -78,7 +80,27 @@ export const boxScoreHandler = createAsyncThunk(
     }
 )
 
-
+export const scheduleHandler = createAsyncThunk(
+    "scheduleHandler",
+    async ( params:NbaScheduleParams , { rejectWithValue }) => {
+        try {
+            console.log(params)
+            const options:AxiosRequestConfig = {
+                method: 'GET',
+                url: 'https://nba-schedule.p.rapidapi.com/schedule',
+                params,
+                headers: {
+                  'X-RapidAPI-Host': 'nba-schedule.p.rapidapi.com',
+                  'X-RapidAPI-Key': API_KEY
+                }
+            };
+            const response = await axios.request(options)
+            return { data: response.data }
+        } catch(error:AxiosError|unknown) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
 
 export const nbaSlice = createSlice({
     name: 'nbaSlice',
@@ -127,6 +149,17 @@ export const nbaSlice = createSlice({
             state.loading = false
         })
         builder.addCase(boxScoreHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+        builder.addCase(scheduleHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(scheduleHandler.fulfilled, (state, { payload }) => {
+            state.data.schedule = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(scheduleHandler.rejected, (state, { payload }) => {
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
