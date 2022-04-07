@@ -1,8 +1,7 @@
-import { NbaPlayerStatsParams, NbaPlayerHeadshotParams, NbaBoxScoreParams, NbaScheduleParams, NBAScheduleForCurrentWeekResponse } from './../types/redux/nba';
+import { NbaPlayerStatsParams, NbaPlayerHeadshotParams, NbaBoxScoreParams, NbaScheduleParams, NBAScheduleForCurrentWeekResponse, NbaComparePlayerParams, NbaCompareHeadshotParams } from './../types/redux/nba';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from "axios"
 import { NbaDraftParams } from '../types/redux/nba'
-import { NbaDraftClassType } from '../types/nba/draftClass'
 
 const PORT = '3001'
 const IP_ADDRESS = '172.17.13.218'
@@ -20,6 +19,17 @@ const initialState = {
             team2: []
         },
         schedule: [],
+        compare: {
+            player1: {
+                stats: [],
+                headshot: ''
+            },
+            player2: {
+                stats: [],
+                headshot: ''
+            }
+        },
+        news: [],
         error: ''
     }
 }
@@ -102,6 +112,120 @@ export const scheduleHandler = createAsyncThunk(
     }
 )
 
+export const comparePlayerStatsHandler = createAsyncThunk(
+    "comparePlayerStatsHandler",
+    async ( params:NbaComparePlayerParams , { rejectWithValue }) => {
+        try {
+            console.log(params)
+            const url:string = START_URL + '/postToGetPlayerStatsHandler'
+            const response1 = await axios.post(url, params.player1)
+            const response2 = await axios.post(url, params.player2)
+            return { player1: response1.data, player2: response2.data }
+        } catch(error) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
+export const comparePlayerHeadshotHandler = createAsyncThunk(
+    "comparePlayerHeadshotHandler",
+    async ( params:NbaCompareHeadshotParams , { rejectWithValue }) => {
+        try {
+            console.log(params)
+            const url:string = START_URL + '/postToGetPlayerHeadshotHandler'
+            const response1 = await axios.post(url, params.player1)
+            const response2 = await axios.post(url, params.player2)
+            return { player1: response1.data, player2: response2.data }
+        } catch(error) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
+export const nbaArticlesHandler = createAsyncThunk(
+    "nbaArticlesHandler",
+    async ( _ , { rejectWithValue }) => {
+        try {
+            const options:AxiosRequestConfig = {
+                method: 'GET',
+                url: 'https://nba-latest-news.p.rapidapi.com/news',
+                headers: {
+                  'X-RapidAPI-Host': 'nba-latest-news.p.rapidapi.com',
+                  'X-RapidAPI-Key': API_KEY
+                }
+            };
+            const response = await axios.request(options)
+            return { data: response.data }
+        } catch(error:AxiosError|unknown) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
+export const nbaSourceArticlesHandler = createAsyncThunk(
+    "nbaSourceArticlesHandler",
+    async ( params:string , { rejectWithValue }) => {
+        try {
+            const options:AxiosRequestConfig = {
+                method: 'GET',
+                url: `https://nba-latest-news.p.rapidapi.com/news/source/${params}`,
+                headers: {
+                  'X-RapidAPI-Host': 'nba-latest-news.p.rapidapi.com',
+                  'X-RapidAPI-Key': API_KEY
+                }
+            };
+            const response = await axios.request(options)
+            return { data: response.data }
+        } catch(error:AxiosError|unknown) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
+
+export const nbaPlayerArticlesHandler = createAsyncThunk(
+    "nbaPlayerArticlesHandler",
+    async ( params:string , { rejectWithValue }) => {
+        try {
+            const formatPlayerName:string = params.toLowerCase().replace(/ /g, "-")
+
+            const options:AxiosRequestConfig = {
+                method: 'GET',
+                url: `https://nba-latest-news.p.rapidapi.com/news/player/${formatPlayerName}`,
+                headers: {
+                  'X-RapidAPI-Host': 'nba-latest-news.p.rapidapi.com',
+                  'X-RapidAPI-Key': API_KEY
+                }
+            };
+            const response = await axios.request(options)
+            return { data: response.data }
+        } catch(error:AxiosError|unknown) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
+export const nbaTeamArticlesHandler = createAsyncThunk(
+    "nbaTeamArticlesHandler",
+    async ( params:string , { rejectWithValue }) => {
+        try {
+            const formatTeamName:string = params.toLowerCase()
+            const options:AxiosRequestConfig = {
+                method: 'GET',
+                url: `https://nba-latest-news.p.rapidapi.com/news/team/${formatTeamName}`,
+                headers: {
+                  'X-RapidAPI-Host': 'nba-latest-news.p.rapidapi.com',
+                  'X-RapidAPI-Key': API_KEY
+                }
+            }
+            const response = await axios.request(options)
+            return { data: response.data }
+        } catch(error:AxiosError|unknown) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
 export const nbaSlice = createSlice({
     name: 'nbaSlice',
     initialState,
@@ -160,6 +284,74 @@ export const nbaSlice = createSlice({
             state.loading = false
         })
         builder.addCase(scheduleHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+        builder.addCase(comparePlayerStatsHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(comparePlayerStatsHandler.fulfilled, (state, { payload }) => {
+            state.data.compare.player1.stats = payload.player1 ? payload.player1 : []
+            state.data.compare.player2.stats = payload.player2 ? payload.player2 : []
+            state.loading = false
+        })
+        builder.addCase(comparePlayerStatsHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+        builder.addCase(comparePlayerHeadshotHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(comparePlayerHeadshotHandler.fulfilled, (state, { payload }) => {
+            state.data.compare.player1.headshot = payload.player1 ? payload.player1 : ''
+            state.data.compare.player2.headshot = payload.player2 ? payload.player2 : ''
+            state.loading = false
+        })
+        builder.addCase(comparePlayerHeadshotHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+        builder.addCase(nbaArticlesHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(nbaArticlesHandler.fulfilled, (state, { payload }) => {
+            state.data.news = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(nbaArticlesHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+        builder.addCase(nbaPlayerArticlesHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(nbaPlayerArticlesHandler.fulfilled, (state, { payload }) => {
+            state.data.news = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(nbaPlayerArticlesHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+        builder.addCase(nbaSourceArticlesHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(nbaSourceArticlesHandler.fulfilled, (state, { payload }) => {
+            state.data.news = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(nbaSourceArticlesHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+        builder.addCase(nbaTeamArticlesHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(nbaTeamArticlesHandler.fulfilled, (state, { payload }) => {
+            state.data.news = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(nbaTeamArticlesHandler.rejected, (state, { payload }) => {
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })

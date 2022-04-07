@@ -9,6 +9,16 @@ export interface NbaPlayerStatsParams {
     career: boolean
 }
 
+export interface NbaComparePlayerParams {
+    player1:  NbaPlayerStatsParams,
+    player2: NbaPlayerStatsParams
+}
+
+export interface NbaCompareHeadshotParams {
+    player1:  NbaPlayerHeadshotParams,
+    player2: NbaPlayerHeadshotParams
+}
+
 export interface NbaPlayerHeadshotParams {
     playerFullName: string
 }

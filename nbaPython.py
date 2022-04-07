@@ -256,6 +256,7 @@ def getPlayerStatsHandlerServer():
     playoffs = data['playoffs']
     career = data['career']
 
+    print(getPlayerStatsHandler(playerFullName, statType, playoffs, career))
     return getPlayerStatsHandler(playerFullName, statType, playoffs, career)
 
 @app.route('/getPlayerHeadshotHandler', methods=['POST'])
@@ -276,8 +277,6 @@ def getBoxScoresHandlerServer():
     team2 = data['team2']
     period = data['period']
     statType = data['statType']
-
-    print('\n\n\n\n\n\n\n',date, team1, team2, period, statType)
 
     return getBoxScoresHandler(date, team1, team2, period, statType)
 
