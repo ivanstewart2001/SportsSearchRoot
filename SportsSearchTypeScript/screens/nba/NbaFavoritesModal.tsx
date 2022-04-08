@@ -1,58 +1,44 @@
-import { FlatList, Image, ListRenderItemInfo, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import { useLayoutEffect } from 'react'
+import { Alert, FlatList, Image, ListRenderItemInfo, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native'
+import PlayerStats from '../../components/nba/PlayerStats'
+import IconButton from '../../components/UI/IconButton'
 import { NbaPlayerStatsType } from '../../types/nba/playerStats'
-import { useNavigation } from "@react-navigation/native"
-import { useLayoutEffect, useState } from 'react'
-import IconButton from '../UI/IconButton'
-import { useDispatch, useSelector } from 'react-redux'
-import { AppDispatch, RootState } from '../../store/store'
-import { addPlayerToFavoritesHandler } from '../../store/nba'
+import { NbaFavoritePlayerModalProp } from '../../types/screens/names'
+import { removePlayerFromFavoritesHandler } from '../../store/nba'
+import { useDispatch } from 'react-redux'
+import { AppDispatch } from '../../store/store'
 
-interface PlayerStatsParams {
-    playerHeadshot: string|undefined,
-    playerStats:NbaPlayerStatsType[] | undefined,
-    statType: string,
-    playerName: string
-}
+function NbaFavoritesPlayerModal({ route, navigation }:NbaFavoritePlayerModalProp) {
+    const { 
+        id,
+        playerHeadshot,
+        playerName,
+        playerStats
+    } = route.params
 
-function PlayerStats({playerHeadshot, playerStats, statType, playerName } : PlayerStatsParams) {
     const { width, height } = useWindowDimensions()
-    const navigation = useNavigation()
     const dispatch = useDispatch<AppDispatch>()
-    const { data, loading } = useSelector((state:RootState) => state.nba)
-    const [isPlayerStarred, setIsPlayerStarred] = useState(false)
-
-    function checkFavorites() {
-        data.favorites.map((favorite) => {
-            if (favorite.playerHeadshot === playerHeadshot) {
-                return setIsPlayerStarred(true)
-            }
-        })
-    }
 
     useLayoutEffect(() => {
-        checkFavorites()
-
         navigation.setOptions({
+            title: playerName,
             headerRight: () => (
-                <IconButton 
-                    icon={isPlayerStarred ? 'star' : 'star-outline'} 
-                    size={24}
-                    color={isPlayerStarred ? 'gold' : 'black'}
+                <IconButton
+                    icon='close-outline'
+                    title='Remove'
+                    componentStyles={{borderRadius:0}}
+                    containerStyles={{borderRadius:0}}
                     onPressProp={() => {
-                        dispatch(addPlayerToFavoritesHandler({
-                            playerHeadshot,
-                            playerStats,
-                            playerName
-                        }))
+                        dispatch(removePlayerFromFavoritesHandler({id:id?id:'break'}))
+                        navigation.goBack()
                     }}
-                    title=' '
-                    componentStyles={{borderWidth:0}}
-                    titleStyles={{borderWidth:0}}
-                    containerStyles={{borderWidth:0}}
+                    size={24}
+                    titleStyles={{borderRadius:0}}
+                    color='red'
                 />
             )
         })
-    })
+    }, [])
 
     let imageSize = 300
 
@@ -112,7 +98,6 @@ function PlayerStats({playerHeadshot, playerStats, statType, playerName } : Play
 
     return (
         <View style={styles.rootContainer}>
-            <Text>{statType}</Text>
             <View style={[styles.imageContainer, imageStyle]}>
                 <Image source={{uri:playerHeadshot}} style={styles.image} />
             </View>
@@ -144,4 +129,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default PlayerStats
+export default NbaFavoritesPlayerModal

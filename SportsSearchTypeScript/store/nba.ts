@@ -1,14 +1,17 @@
-import { NbaPlayerStatsParams, NbaPlayerHeadshotParams, NbaBoxScoreParams, NbaScheduleParams, NBAScheduleForCurrentWeekResponse, NbaComparePlayerParams, NbaCompareHeadshotParams } from './../types/redux/nba';
+import { NbaPlayerStatsParams, NbaPlayerHeadshotParams, NbaBoxScoreParams, NbaScheduleParams, NBAScheduleForCurrentWeekResponse, NbaComparePlayerParams, NbaCompareHeadshotParams, SavePlayerToFavoritesParams, FavoritesPlayersReturnType, EntireNbaInitialStateType, RemovePlayerFromFavoritesParams } from './../types/redux/nba';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from "axios"
 import { NbaDraftParams } from '../types/redux/nba'
+import { database } from '../firebase/firebase';
+import { getAuth } from 'firebase/auth'
 
 const PORT = '3001'
-const IP_ADDRESS = '172.17.13.218'
+const IP_ADDRESS =  '10.55.140.183' // '10.26.142.45' //'172.17.13.218'
 const START_URL = `http://${IP_ADDRESS}:${PORT}`
 const API_KEY:Readonly<string> = '201771a6cemshea6057f5378b9d3p1abed7jsn896b7d0a937d'
+const auth = getAuth()
 
-const initialState = {
+const initialState:EntireNbaInitialStateType = {
     loading: false,
     data: {
         draftClass: [],
@@ -30,6 +33,7 @@ const initialState = {
             }
         },
         news: [],
+        favorites: [],
         error: ''
     }
 }
@@ -226,6 +230,67 @@ export const nbaTeamArticlesHandler = createAsyncThunk(
     }
 )
 
+export const addPlayerToFavoritesHandler = createAsyncThunk(
+    "addPlayerToFavoritesHandler",
+    async ( params:SavePlayerToFavoritesParams , { rejectWithValue }) => {
+        try {
+            const returnObject:FavoritesPlayersReturnType = {
+                id: '',
+                playerHeadshot: params.playerHeadshot,
+                playerStats: params.playerStats,
+                playerName: params.playerName
+            }
+
+            const currentUserId = auth.currentUser?.uid
+            await database.ref(`${currentUserId}/favoritePlayers`).push(params).then((ref) => {
+                returnObject.id = ref.key
+            })
+
+            return { data: returnObject }
+        } catch(error:AxiosError|unknown) {
+            return rejectWithValue('Error');
+        } 
+    }
+) 
+
+export const setFavoritePlayersHandler = createAsyncThunk(
+    "setFavoritePlayersHandler",
+    async ( _ , { rejectWithValue }) => {
+        try {
+            const currentUserId = auth.currentUser?.uid
+            const allFavoritePlayers:FavoritesPlayersReturnType[] = []
+
+            await database.ref(`${currentUserId}/favoritePlayers`).once('value').then((snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    allFavoritePlayers.push({
+                        id: childSnapshot.key,
+                        ...childSnapshot.val()
+                    })
+                })
+            })
+            return { data: allFavoritePlayers }
+        } catch(error:AxiosError|unknown) {
+            return rejectWithValue('Error');
+        } 
+    }
+) 
+
+export const removePlayerFromFavoritesHandler = createAsyncThunk(
+    "removePlayerFromFavoritesHandler",
+    async ( { id }:RemovePlayerFromFavoritesParams  , { rejectWithValue }) => {
+        try {
+            if (id === 'break') {
+                return { data:id }
+            }
+            const currentUserId = auth.currentUser?.uid
+            await database.ref(`${currentUserId}/favoritePlayers/${id}`).remove()
+            return { data: id }
+        } catch(error:AxiosError|unknown) {
+            return rejectWithValue('Error');
+        } 
+    }
+) 
+
 export const nbaSlice = createSlice({
     name: 'nbaSlice',
     initialState,
@@ -242,6 +307,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(playerStatsHandler.pending, (state) => {
             state.loading = true
         })
@@ -253,6 +320,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(playerHeadshotHandler.pending, (state) => {
             state.loading = true
         })
@@ -264,6 +333,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(boxScoreHandler.pending, (state) => {
             state.loading = true
         })
@@ -276,6 +347,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(scheduleHandler.pending, (state) => {
             state.loading = true
         })
@@ -287,6 +360,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(comparePlayerStatsHandler.pending, (state) => {
             state.loading = true
         })
@@ -299,6 +374,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(comparePlayerHeadshotHandler.pending, (state) => {
             state.loading = true
         })
@@ -311,6 +388,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(nbaArticlesHandler.pending, (state) => {
             state.loading = true
         })
@@ -322,6 +401,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(nbaPlayerArticlesHandler.pending, (state) => {
             state.loading = true
         })
@@ -333,6 +414,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(nbaSourceArticlesHandler.pending, (state) => {
             state.loading = true
         })
@@ -344,6 +427,8 @@ export const nbaSlice = createSlice({
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })
+
+
         builder.addCase(nbaTeamArticlesHandler.pending, (state) => {
             state.loading = true
         })
@@ -352,6 +437,45 @@ export const nbaSlice = createSlice({
             state.loading = false
         })
         builder.addCase(nbaTeamArticlesHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+
+
+        builder.addCase(addPlayerToFavoritesHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(addPlayerToFavoritesHandler.fulfilled, (state, { payload }) => {
+            state.data.favorites.push(payload.data)
+            state.loading = false
+        })
+        builder.addCase(addPlayerToFavoritesHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+
+
+        builder.addCase(setFavoritePlayersHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(setFavoritePlayersHandler.fulfilled, (state, { payload }) => {
+            state.data.favorites = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(setFavoritePlayersHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+
+
+        builder.addCase(removePlayerFromFavoritesHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(removePlayerFromFavoritesHandler.fulfilled, (state, { payload }) => {
+            state.data.favorites = state.data.favorites.filter((favorite) => favorite.id !== payload.data)
+            state.loading = false
+        })
+        builder.addCase(removePlayerFromFavoritesHandler.rejected, (state, { payload }) => {
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })

@@ -1,3 +1,4 @@
+import { NbaPlayerStatsType } from './../nba/playerStats';
 export interface NbaDraftParams {
     year: string
 }
@@ -110,4 +111,48 @@ export interface NBAScheduleForCurrentWeekResponsePointsLeaders {
     teamName: string,
     teamTricode: string,
     points: number 
+}
+
+export interface SavePlayerToFavoritesParams {
+    playerHeadshot: string|undefined,
+    playerStats: NbaPlayerStatsType[]|undefined,
+    playerName: string
+}
+
+export interface RemovePlayerFromFavoritesParams {
+    id: string
+}
+
+export interface FavoritesPlayersReturnType {
+    id: string|null,
+    playerHeadshot: string|undefined,
+    playerStats: NbaPlayerStatsType[]|undefined,
+    playerName: string
+}
+
+export interface EntireNbaInitialStateType {
+    loading: boolean,
+    data: {
+        draftClass: [],
+        playerStats: [],
+        playerHeadshot: string,
+        boxScore: {
+            team1: [],
+            team2: []
+        },
+        schedule: [],
+        compare: {
+            player1: {
+                stats: [],
+                headshot: string
+            },
+            player2: {
+                stats: [],
+                headshot: string
+            }
+        },
+        news: [],
+        favorites: FavoritesPlayersReturnType[]
+        error: string
+    }
 }

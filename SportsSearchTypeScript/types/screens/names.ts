@@ -2,6 +2,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { DrawerNavigationProp }  from '@react-navigation/drawer'
 import { NavigationProp, RouteProp } from '@react-navigation/native'
 import { NbaDraftClassType } from '../nba/draftClass'
+import { FavoritesPlayersReturnType } from '../redux/nba'
 
 export type RootStackParamList = {
     // Auth Routes
@@ -21,7 +22,8 @@ export type RootStackParamList = {
     NbaSearchTeamRoster: undefined,
     NbaSearchTeamStats: undefined,
     NbaSearchRosterStats: undefined
-    NbaSearchPlayerModal: { data: NbaDraftClassType }
+    NbaSearchPlayerModal: { data: NbaDraftClassType },
+    NbaFavoritesPlayerModal: { data: FavoritesPlayersReturnType }
 }
 
 // Auth
@@ -57,10 +59,17 @@ export type NbaSearchPlayerModalProp = {
     navigation: NavigationProp<any>
 }
 
+export type NbaFavoritePlayerModalProp = {
+    route: RouteProp<{ params: FavoritesPlayersReturnType }, 'params'>
+    navigation: NavigationProp<any>
+}
+
 export type NbaModalsParamList = {
-    NbaSearchPlayerModal: NbaDraftClassType
+    NbaSearchPlayerModal: NbaDraftClassType,
+    NbaFavoritesPlayerModal: FavoritesPlayersReturnType
 }
 export type NbaModalScreenProps = NativeStackNavigationProp<NbaModalsParamList>
+
 
 
 

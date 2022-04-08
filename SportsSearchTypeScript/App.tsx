@@ -51,6 +51,7 @@ import { RootStackParamList, DrawerParamList } from './types/screens/names';
 import { Provider } from 'react-redux';
 import { store } from './store/store'
 import SignOutComponent from './screens/auth/SignOutComponent';
+import NbaFavoritesPlayerModal from './screens/nba/NbaFavoritesModal';
 
 const Stack = createNativeStackNavigator<RootStackParamList>()
 const Drawer = createDrawerNavigator<DrawerParamList>()
@@ -357,6 +358,14 @@ export default function App() {
                 <Stack.Screen 
                   name='NbaSearchPlayerModal'
                   component={NbaSearchPlayerModal}
+                  options={{
+                    headerShown: true,
+                    presentation: 'modal'
+                  }}
+                /> 
+                <Stack.Screen 
+                  name='NbaFavoritesPlayerModal'
+                  component={NbaFavoritesPlayerModal}
                   options={{
                     headerShown: true,
                     presentation: 'modal'

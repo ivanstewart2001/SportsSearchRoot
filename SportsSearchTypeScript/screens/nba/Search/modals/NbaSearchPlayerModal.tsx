@@ -2,7 +2,7 @@ import { useLayoutEffect } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { NbaSearchPlayerModalProp } from '../../../../types/screens/names'
 
-function NbaSearchListItem({ route, navigation }:NbaSearchPlayerModalProp) {
+function NbaPlayerSearchModal({ route, navigation }:NbaSearchPlayerModalProp) {
     const { 
         PLAYER, COLLEGE, 
         PICK, YEARS, 
@@ -80,4 +80,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default NbaSearchListItem
+export default NbaPlayerSearchModal

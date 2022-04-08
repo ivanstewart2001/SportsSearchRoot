@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Text, View, StyleSheet, Alert, Button, ScrollView } from "react-native"
 import { Picker } from '@react-native-picker/picker'
 import { useDispatch, useSelector } from "react-redux"
-import { playerStatsHandler, playerHeadshotHandler } from "../../../store/nba"
+import { playerStatsHandler, playerHeadshotHandler, setFavoritePlayersHandler } from "../../../store/nba"
 import { AppDispatch, RootState } from "../../../store/store"
 import LoadingOverlay from "../../../components/UI/LoadingOverlay"
 import { TextInput } from "react-native-gesture-handler"
@@ -38,8 +38,10 @@ function NbaSearchPlayer() {
             playerFullName
         }
 
+        dispatch(setFavoritePlayersHandler())
         dispatch(playerStatsHandler(playerStatsParams))
         dispatch(playerHeadshotHandler(playerHeadshotParams))
+       
         return
     }
 
@@ -98,7 +100,7 @@ function NbaSearchPlayer() {
         )
     }
 
-    if (playerStats && playerStats.length === 0 && submitted && !loading) {
+    if (data.playerStats && data.playerStats.length === 0 && submitted && !loading) {
         return (
             <View style={styles.container}>
                 <Text>Sorry! Could not find draft class for given year. Please try a different year.</Text>
@@ -122,8 +124,9 @@ function NbaSearchPlayer() {
             }}/>
             <PlayerStats
                 statType={selectedStatType}
-                playerHeadshot={playerHeadshot} 
-                playerStats={playerStats}
+                playerHeadshot={data.playerHeadshot} 
+                playerStats={data.playerStats}
+                playerName={playerFullName}
             />
         </View>
 
