@@ -103,7 +103,7 @@ function NbaSearchPlayer() {
     if (data.playerStats && data.playerStats.length === 0 && submitted && !loading) {
         return (
             <View style={styles.container}>
-                <Text>Sorry! Could not find draft class for given year. Please try a different year.</Text>
+                <Text>Sorry! Could not find player. Please try a different player.</Text>
                 <Button title='Reset' onPress={() => {
                     setPlayerFullName('')
                     setSubmitted(false)

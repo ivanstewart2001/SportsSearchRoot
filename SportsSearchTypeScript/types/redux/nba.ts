@@ -1,3 +1,10 @@
+import { NbaRosterStatsType } from './../nba/rosterStats';
+import { ArticlesReturnType } from '../nba/articles';
+import { BoxScoreReturnType } from '../nba/boxScore';
+import { NbaDraftClassType } from '../nba/draftClass';
+import { NbaScheduleComponentParams } from '../nba/schedule';
+import { TeamRosterReturnType } from '../nba/teamRoster';
+import { NbaTeamStatsReturnType } from '../nba/teamStats';
 import { NbaPlayerStatsType } from './../nba/playerStats';
 export interface NbaDraftParams {
     year: string
@@ -130,29 +137,50 @@ export interface FavoritesPlayersReturnType {
     playerName: string
 }
 
+export interface TeamRosterParams {
+    team: string,
+    year: string
+}
+
+export interface NbaTeamStatsParams {
+    teamAbbreviation: string,
+    year: string,
+    dataFormat: string
+}
+
+export interface NbaRosterStatsParams {
+    teamAbbreviation: string,
+    year: string,
+    dataFormat: string,
+    playoffs: boolean
+}
+
 export interface EntireNbaInitialStateType {
     loading: boolean,
     data: {
-        draftClass: [],
-        playerStats: [],
+        draftClass: NbaDraftClassType[],
+        playerStats: NbaPlayerStatsType[],
         playerHeadshot: string,
         boxScore: {
-            team1: [],
-            team2: []
+            team1: BoxScoreReturnType[],
+            team2: BoxScoreReturnType[]
         },
-        schedule: [],
+        schedule: NbaScheduleComponentParams[],
         compare: {
             player1: {
-                stats: [],
+                stats: NbaPlayerStatsType[],
                 headshot: string
             },
             player2: {
-                stats: [],
+                stats: NbaPlayerStatsType[],
                 headshot: string
             }
         },
-        news: [],
-        favorites: FavoritesPlayersReturnType[]
+        news: ArticlesReturnType[],
+        favorites: FavoritesPlayersReturnType[],
+        roster: TeamRosterReturnType[],
+        teamStats: NbaTeamStatsReturnType[],
+        rosterStats: NbaRosterStatsType[],
         error: string
     }
 }

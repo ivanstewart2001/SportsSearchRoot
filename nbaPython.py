@@ -137,7 +137,7 @@ def getRosterHandler(teamAbbreviation:str, year:int) -> list:
     # Parameters
     # team - NBA team abbreviation (e.g. 'GSW', 'SAS')
     # season_end_year - Desired end year (e.g. 1988, 2011)
-
+    
     res = get_roster(teamAbbreviation, year)
     return formatDataframe(res)
 
@@ -221,7 +221,7 @@ def getDraftClassHandlerServer():
 def getRosterHandlerServer():
     data = request.get_json()
 
-    teamAbbreviation = data['teamAbbreviation']
+    teamAbbreviation = data['team']
     year = data['year']
 
     return getRosterHandler(teamAbbreviation, year)
@@ -231,7 +231,7 @@ def getTeamStatsHandlerServer():
     data = request.get_json()
 
     teamAbbreviation = data['teamAbbreviation']
-    year = data['year']
+    year = int(data['year'])
     dataFormat = data['dataFormat']
 
     return getTeamStatsHandler(teamAbbreviation, year, dataFormat)
@@ -241,7 +241,7 @@ def getRosterStatsHandlerServer():
     data = request.get_json()
 
     teamAbbreviation = data['teamAbbreviation']
-    year = data['year']
+    year = int(data['year'])
     dataFormat = data['dataFormat']
     playoffs = data['playoffs']
 

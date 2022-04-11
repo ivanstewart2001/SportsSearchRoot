@@ -1,12 +1,28 @@
-import { NbaPlayerStatsParams, NbaPlayerHeadshotParams, NbaBoxScoreParams, NbaScheduleParams, NBAScheduleForCurrentWeekResponse, NbaComparePlayerParams, NbaCompareHeadshotParams, SavePlayerToFavoritesParams, FavoritesPlayersReturnType, EntireNbaInitialStateType, RemovePlayerFromFavoritesParams } from './../types/redux/nba';
+import { 
+    NbaPlayerStatsParams, 
+    NbaPlayerHeadshotParams, 
+    NbaBoxScoreParams, 
+    NbaScheduleParams, 
+    NBAScheduleForCurrentWeekResponse, 
+    NbaComparePlayerParams, 
+    NbaCompareHeadshotParams, 
+    SavePlayerToFavoritesParams, 
+    FavoritesPlayersReturnType, 
+    EntireNbaInitialStateType,
+    TeamRosterParams, 
+    RemovePlayerFromFavoritesParams,
+    NbaTeamStatsParams,
+    NbaRosterStatsParams
+} from './../types/redux/nba';
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from "axios"
 import { NbaDraftParams } from '../types/redux/nba'
 import { database } from '../firebase/firebase';
 import { getAuth } from 'firebase/auth'
+import { convertTeamStats } from '../util/nba/teamStats';
 
 const PORT = '3001'
-const IP_ADDRESS =  '10.55.140.183' // '10.26.142.45' //'172.17.13.218'
+const IP_ADDRESS =  '172.17.13.218' // '10.55.140.183' //'10.55.140.183' // '10.26.142.45' //'172.17.13.218'
 const START_URL = `http://${IP_ADDRESS}:${PORT}`
 const API_KEY:Readonly<string> = '201771a6cemshea6057f5378b9d3p1abed7jsn896b7d0a937d'
 const auth = getAuth()
@@ -34,6 +50,9 @@ const initialState:EntireNbaInitialStateType = {
         },
         news: [],
         favorites: [],
+        roster: [],
+        teamStats: [],
+        rosterStats: [],
         error: ''
     }
 }
@@ -291,6 +310,49 @@ export const removePlayerFromFavoritesHandler = createAsyncThunk(
     }
 ) 
 
+export const teamRosterHandler = createAsyncThunk(
+    "teamRosterHandler",
+    async ( params:TeamRosterParams , { rejectWithValue }) => {
+        try {
+            console.log(params)
+            const url:string = START_URL + '/postToGetRosterHandler'
+            const response = await axios.post(url, params)
+            return { data:response.data }
+        } catch(error) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
+export const teamStatsHandler = createAsyncThunk(
+    "teamStatsHandler",
+    async ( params:NbaTeamStatsParams , { rejectWithValue }) => {
+        try {
+            console.log(params)
+            const url:string = START_URL + '/postToGetTeamStatsHandler'
+            const response = await axios.post(url, params)
+            return { data: convertTeamStats(response.data) }
+        } catch(error) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
+export const rosterStatsHandler = createAsyncThunk(
+    "rosterStatsHandler",
+    async ( params:NbaRosterStatsParams , { rejectWithValue }) => {
+        try {
+            console.log(params)
+            const url:string = START_URL + '/postToGetRosterStatsHandler'
+            const response = await axios.post(url, params)
+            console.log(response.data)
+            return { data: response.data }
+        } catch(error) {
+            return rejectWithValue('Error');
+        } 
+    }
+)
+
 export const nbaSlice = createSlice({
     name: 'nbaSlice',
     initialState,
@@ -476,6 +538,43 @@ export const nbaSlice = createSlice({
             state.loading = false
         })
         builder.addCase(removePlayerFromFavoritesHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+
+        builder.addCase(teamRosterHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(teamRosterHandler.fulfilled, (state, { payload }) => {
+            state.data.roster = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(teamRosterHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+
+        builder.addCase(teamStatsHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(teamStatsHandler.fulfilled, (state, { payload }) => {
+            state.data.teamStats = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(teamStatsHandler.rejected, (state, { payload }) => {
+            state.data.error = payload as string ? payload as string : ''
+            state.loading = false
+        })
+
+
+        builder.addCase(rosterStatsHandler.pending, (state) => {
+            state.loading = true
+        })
+        builder.addCase(rosterStatsHandler.fulfilled, (state, { payload }) => {
+            state.data.rosterStats = payload.data ? payload.data : []
+            state.loading = false
+        })
+        builder.addCase(rosterStatsHandler.rejected, (state, { payload }) => {
             state.data.error = payload as string ? payload as string : ''
             state.loading = false
         })

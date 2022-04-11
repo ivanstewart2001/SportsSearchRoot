@@ -30,15 +30,10 @@ app.post('/postToGetDraftClassHandler', async function(req, res, next) {
 });
 
 app.post('/postToGetRosterHandler', async function(req, res, next) {
-  const data = {
-    teamAbbreviation: 'CHI',
-    year: 1985
-  }
-
   const options = {
     method: 'POST',
     uri: 'http://127.0.0.1:5000/getRosterHandler',
-    body: data,
+    body: req.body,
     json: true
   }
 
@@ -58,16 +53,10 @@ app.post('/postToGetRosterHandler', async function(req, res, next) {
 });
 
 app.post('/postToGetTeamStatsHandler', async function(req, res, next) {
-  const data = {
-    teamAbbreviation: 'CHI',
-    year: 1985,
-    dataFormat: 'TOTAL'
-  }
-
   const options = {
     method: 'POST',
     uri: 'http://127.0.0.1:5000/getTeamStatsHandler',
-    body: data,
+    body: req.body,
     json: true
   }
 
@@ -90,6 +79,29 @@ app.post('/postToGetPlayerStatsHandler', async function(req, res, next) {
   const options = {
     method: 'POST',
     uri: 'http://127.0.0.1:5000/getPlayerStatsHandler',
+    body: req.body,
+    json: true
+  }
+
+  let returnData
+
+  const sendRequest = await request(options)
+    .then((parsedBody) => {
+      console.log(parsedBody)
+      returnData = parsedBody
+    })
+    .catch((err) => {
+      console.log(err)
+    })
+
+  res.send(returnData)
+
+});
+
+app.post('/postToGetRosterStatsHandler', async function(req, res, next) {
+  const options = {
+    method: 'POST',
+    uri: 'http://127.0.0.1:5000/getRosterStatsHandler',
     body: req.body,
     json: true
   }
