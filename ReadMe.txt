@@ -12,4 +12,4 @@ Basic Usage
 ⁃ In SportsSearchRoot/SportsSearchTypeScript/store/nba.ts change the IP_ADDRESS variable in line 25 to your IP Address
 
 Tips
-⁃ More than likely when you run nom start in SportsSearchRoot SportsSearchTypeScript you will get multiple errors. If this happens npm install whatever packages are missing
+⁃ More than likely when you run npm start in SportsSearchRoot/SportsSearchTypeScript you will get multiple errors. If this happens npm install whatever packages are missing (missing packages can be seen in SportsSearchRoot/SportsSearchTypeScript/package.json)
