@@ -98,7 +98,6 @@ function NbaSearchDraftClass() {
                 renderItem={ ({item}:ListRenderItemInfo<NbaDraftClassType>) => renderItem(item)}
             />
         </View>
-
     )
 }
 
