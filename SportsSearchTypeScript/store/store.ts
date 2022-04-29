@@ -1,10 +1,12 @@
 import { configureStore, combineReducers, createStore } from '@reduxjs/toolkit'
 import { authReducer } from './auth'
 import { nbaReducer } from './nba';
+import { nflReducer } from './nfl';
 
 const reducer = {
     auth: authReducer,
-    nba: nbaReducer
+    nba: nbaReducer,
+    nfl: nflReducer
 }
 
 export const store = configureStore({

@@ -36,6 +36,11 @@ import NflSearchScreen from './screens/nfl/NflSearchScreen'
 import NflCompareScreen from './screens/nfl/NflCompareScreen'
 import NflFavoritesScreen from './screens/nfl/NflFavoritesScreen'
 
+import TeamPassing from './screens/nfl/Search/TeamPassing';
+import TeamRecieving from './screens/nfl/Search/TeamRecieving';
+import TeamRushing from './screens/nfl/Search/TeamRushing';
+import TeamWins from './screens/nfl/Search/TeamWins';
+
 // MLB Screens
 import MlbReportsScreen from './screens/mlb/MlbReportsScreen'
 import MlbSearchScreen from './screens/mlb/MlbSearchScreen'
@@ -370,7 +375,36 @@ export default function App() {
                     headerShown: true,
                     presentation: 'modal'
                   }}
-                />            
+                />
+
+                <Stack.Screen 
+                  name='TeamPassing'
+                  component={TeamPassing}
+                  options={{
+                    headerShown: true
+                  }}
+                />   
+                <Stack.Screen 
+                  name='TeamRecieving'
+                  component={TeamRecieving}
+                  options={{
+                    headerShown: true
+                  }}
+                /> 
+                <Stack.Screen 
+                  name='TeamRushing'
+                  component={TeamRushing}
+                  options={{
+                    headerShown: true
+                  }}
+                /> 
+                <Stack.Screen 
+                  name='TeamWins'
+                  component={TeamWins}
+                  options={{
+                    headerShown: true
+                  }}
+                />          
               </Stack.Navigator>
             </SafeAreaView>
         </NavigationContainer>

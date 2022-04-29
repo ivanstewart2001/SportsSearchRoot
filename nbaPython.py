@@ -1,4 +1,3 @@
-from crypt import methods
 from basketball_reference_scraper.drafts import get_draft_class
 from basketball_reference_scraper.teams import get_roster, get_team_stats, get_roster_stats
 from basketball_reference_scraper.players import get_stats, get_player_headshot

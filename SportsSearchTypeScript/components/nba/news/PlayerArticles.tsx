@@ -14,7 +14,6 @@ function PlayerArticles() {
         setplayerArticles(data.news)
     }, [loading])
 
-
     function renderItem({ source, title, url }:ArticlesReturnType) {
         return (
             <View style={styles.articleContainer}>
@@ -31,6 +30,8 @@ function PlayerArticles() {
     if (loading) {
         return <LoadingOverlay />
     }
+
+    console.log(data.news)
 
     return (
         <View>

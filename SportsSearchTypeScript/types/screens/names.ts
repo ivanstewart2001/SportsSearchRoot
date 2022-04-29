@@ -24,6 +24,12 @@ export type RootStackParamList = {
     NbaSearchRosterStats: undefined
     NbaSearchPlayerModal: { data: NbaDraftClassType },
     NbaFavoritesPlayerModal: { data: FavoritesPlayersReturnType }
+
+    // NFL Routes
+    TeamPassing: undefined,
+    TeamRushing: undefined,
+    TeamWins: undefined,
+    TeamRecieving: undefined
 }
 
 // Auth
@@ -70,8 +76,15 @@ export type NbaModalsParamList = {
 }
 export type NbaModalScreenProps = NativeStackNavigationProp<NbaModalsParamList>
 
+// NBA
+export type NflSearchParamList = {
+    TeamPassing: undefined,
+    TeamRushing: undefined,
+    TeamWins: undefined,
+    TeamRecieving: undefined
 
-
+}
+export type NflSearchScreenProps = NativeStackNavigationProp<NflSearchParamList>
 
 
 export type DrawerParamList = {

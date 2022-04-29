@@ -24,8 +24,18 @@ function NbaNewsScreen() {
     const [source, setSource] = useState('nba')
     const [selectedSource, setSelectedSource] = useState(false)
 
+    console.log(option)
+
     return (
-        <View>
+        <View style={styles.rootContainer}>
+            <Button title="Reset" onPress={() => {
+                setOption('ALL_ARTICLES')
+                setSelectedOption(false)
+                setSelectedTeam(false)
+                setSelectedPlayer(false)
+                setSelectedSource(false)
+            }}/>
+
             {
                 !selectedOption && (
                     <View>
@@ -106,17 +116,20 @@ function NbaNewsScreen() {
             {
                 ((selectedOption) && (option === 'ARTICLES_BY_PLAYER') && (!selectedPlayer)) && (
                     <View>
-                            <TextInput placeholder="Player Name" onChangeText={setPlayerName} value={playerName} />
+                            <TextInput style={styles.playerName} placeholder="Player Name" onChangeText={setPlayerName} value={playerName} />
                             <Button title="Submit" onPress={() => {
                                 dispatch(nbaPlayerArticlesHandler(playerName))
-                                setSelectedTeam(true)
+                                setSelectedPlayer(true)
                             }}/>
                     </View>
                 )
             }
             {
                 ((selectedPlayer) && (option === 'ARTICLES_BY_PLAYER')) && (
-                    <PlayerArticles />
+                    <View>
+                        <Text>{playerName}</Text>
+                        <PlayerArticles />
+                    </View>
                 )
             }
             {
@@ -145,15 +158,20 @@ function NbaNewsScreen() {
                     <SourceArticles />
                 )
             }
-            <Button title="Reset" onPress={() => {
-                setOption('ALL_ARTICLES')
-                setSelectedOption(false)
-                setSelectedTeam(false)
-                setSelectedPlayer(false)
-                setSelectedSource(false)
-            }}/>
         </View>
     )
 }
+
+const styles = StyleSheet.create({
+    rootContainer: {
+        flex: 1,
+        marginBottom: 60
+    },
+    playerName: {
+        borderWidth: 1,
+        margin: 10,
+        height: 40
+    }
+})
 
 export default NbaNewsScreen
